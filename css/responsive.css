@@ -1,0 +1,64 @@
+/* =========================================================================
+   HUB Chat — Responsive
+   Strategy: on desktop (>=1024px) rail + sidebar + main show together.
+   On tablet/mobile only ONE column shows at a time, driven by
+   [data-mobile-view] on .app-shell ("list" | "chat" | "context").
+   ========================================================================= */
+
+/* ---------- Tablet ---------- */
+@media (max-width:1023px){
+  .app-shell{ grid-template-columns:var(--rail-width) 1fr; }
+  .sidebar{ width:100%; }
+  .main-panel{ display:none; }
+  .app-shell[data-mobile-view="chat"] .main-panel{ display:flex; }
+  .app-shell[data-mobile-view="chat"] .sidebar{ display:none; }
+  .context-panel{ width:300px; }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width:680px){
+  .app-shell{ grid-template-columns:1fr; }
+  .nav-rail{
+    position:fixed; bottom:0; left:0; right:0; top:auto;
+    flex-direction:row; width:100%; height:64px;
+    padding:0 var(--space-3);
+    border-right:none; border-top:1px solid var(--border-subtle);
+    justify-content:space-around;
+    z-index:50;
+  }
+  .nav-rail__logo{ display:none; }
+  .nav-rail__items{ flex-direction:row; width:100%; justify-content:space-around; }
+  .nav-rail__spacer{ display:none; }
+  .nav-rail__avatar{ width:36px;height:36px; }
+  .rail-btn.is-active::before{ left:50%; top:-2px; transform:translateX(-50%); width:22px; height:3px; }
+
+  .sidebar{ padding-bottom:64px; }
+  .main-panel{ padding-bottom:0; }
+  .composer{ padding-bottom:calc(var(--space-4) + env(safe-area-inset-bottom)); }
+
+  .app-shell[data-mobile-view="chat"] .nav-rail{ display:none; }
+  .app-shell[data-mobile-view="chat"] .composer{ margin-bottom:0; }
+
+  .message-list{ padding:var(--space-4) var(--space-4); }
+  .msg-group{ max-width:82%; }
+  .context-panel{ width:100%; }
+
+  .sidebar__title{ font-size:19px; }
+  .topbar{ padding:0 var(--space-3); }
+
+  .modal{ max-width:100%; }
+  .story-viewer__stage{ width:100vw; }
+
+  .call-video__self{ width:88px; height:120px; }
+}
+
+/* ---------- Small phones ---------- */
+@media (max-width:380px){
+  .msg-group{ max-width:88%; }
+  .sidebar__header,.sidebar__search,.sidebar__tabs{ padding-left:var(--space-4); padding-right:var(--space-4); }
+}
+
+/* ---------- Large desktop: allow context panel to push instead of overlay ---------- */
+@media (min-width:1400px){
+  .app-shell{ grid-template-columns:var(--rail-width) var(--sidebar-width) 1fr; }
+}

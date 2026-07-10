@@ -1,0 +1,121 @@
+/* =========================================================================
+   HUB Chat — Design Tokens
+   Signature: the "Signal" gradient (violet -> teal) represents a message
+   travelling from sender to receiver. It is used sparingly: on the logo
+   mark, the active-chat rail, sent-bubble edges and primary actions only.
+   ========================================================================= */
+
+:root{
+  /* ---- Brand gradient ("Signal") ---- */
+  --signal-start:#6D5DF6;
+  --signal-end:#14C8B0;
+  --signal-gradient:linear-gradient(135deg,var(--signal-start) 0%,var(--signal-end) 100%);
+  --signal-gradient-soft:linear-gradient(135deg,rgba(109,93,246,.16) 0%,rgba(20,200,176,.16) 100%);
+
+  /* ---- Accent (alerts / reactions / badges) ---- */
+  --accent-coral:#FF6B6B;
+  --accent-amber:#FFB84D;
+  --accent-green:#2ED47A;
+
+  /* ---- Typography ---- */
+  --font-display:'Sora',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+
+  /* ---- Radii ---- */
+  --radius-xs:8px;
+  --radius-sm:12px;
+  --radius-md:16px;
+  --radius-lg:22px;
+  --radius-xl:28px;
+  --radius-round:999px;
+
+  /* ---- Spacing scale ---- */
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-7:32px;
+  --space-8:40px;
+
+  /* ---- Elevation ---- */
+  --shadow-sm:0 2px 8px rgba(10,14,26,.08);
+  --shadow-md:0 8px 24px rgba(10,14,26,.14);
+  --shadow-lg:0 20px 48px rgba(10,14,26,.22);
+  --shadow-glow:0 0 0 1px rgba(109,93,246,.35), 0 8px 32px rgba(109,93,246,.25);
+
+  /* ---- Motion ---- */
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --dur-fast:120ms;
+  --dur-base:200ms;
+  --dur-slow:360ms;
+
+  /* ---- Layout ---- */
+  --rail-width:84px;
+  --sidebar-width:380px;
+  --topbar-height:68px;
+  --composer-min-height:64px;
+}
+
+/* ===================== LIGHT THEME (default) ===================== */
+:root,
+[data-theme="light"]{
+  --bg-app:#F2F4FA;
+  --bg-surface:#FFFFFF;
+  --bg-surface-alt:#F7F8FC;
+  --bg-elevated:#FFFFFF;
+
+  --glass-bg:rgba(255,255,255,.62);
+  --glass-border:rgba(255,255,255,.8);
+  --glass-blur:18px;
+
+  --text-primary:#131629;
+  --text-secondary:#5B6178;
+  --text-tertiary:#9198AC;
+  --text-inverse:#FFFFFF;
+
+  --border-subtle:rgba(19,22,41,.08);
+  --border-strong:rgba(19,22,41,.14);
+
+  --bubble-in:#FFFFFF;
+  --bubble-in-text:#131629;
+  --bubble-out:var(--signal-gradient);
+  --bubble-out-text:#FFFFFF;
+
+  --scrollbar-thumb:rgba(19,22,41,.18);
+  --input-bg:#EDEFF6;
+  --overlay:rgba(12,14,24,.45);
+}
+
+/* ===================== DARK THEME ===================== */
+[data-theme="dark"]{
+  --bg-app:#0A0E1A;
+  --bg-surface:#10142499;
+  --bg-surface:#111528;
+  --bg-surface-alt:#161B31;
+  --bg-elevated:#1A1F38;
+
+  --glass-bg:rgba(22,27,49,.55);
+  --glass-border:rgba(255,255,255,.08);
+  --glass-blur:20px;
+
+  --text-primary:#F3F4FA;
+  --text-secondary:#A3A9C2;
+  --text-tertiary:#6B7191;
+  --text-inverse:#0A0E1A;
+
+  --border-subtle:rgba(255,255,255,.08);
+  --border-strong:rgba(255,255,255,.14);
+
+  --bubble-in:#1A1F38;
+  --bubble-in-text:#F3F4FA;
+  --bubble-out:var(--signal-gradient);
+  --bubble-out-text:#FFFFFF;
+
+  --scrollbar-thumb:rgba(255,255,255,.16);
+  --input-bg:#1A1F38;
+  --overlay:rgba(4,5,12,.6);
+}

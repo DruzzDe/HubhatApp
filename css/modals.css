@@ -1,0 +1,120 @@
+/* =========================================================================
+   HUB Chat — Modals, Dropdowns, Sheets
+   ========================================================================= */
+
+.modal-overlay{
+  position:fixed; inset:0; z-index:400;
+  background:var(--overlay);
+  backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--space-5);
+  animation:fadeIn var(--dur-base) var(--ease-out);
+}
+
+.modal{
+  width:100%; max-width:440px; max-height:88vh;
+  display:flex; flex-direction:column;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-lg);
+  animation:cardRise var(--dur-slow) var(--ease-spring);
+  overflow:hidden;
+}
+.modal--wide{ max-width:560px; }
+
+.modal__header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--space-5) var(--space-5) var(--space-4);
+  border-bottom:1px solid var(--border-subtle);
+  flex-shrink:0;
+}
+.modal__header h2{ font-size:17px; }
+.modal__body{ padding:var(--space-5); overflow-y:auto; flex:1; }
+.modal__footer{
+  display:flex; justify-content:flex-end; gap:10px;
+  padding:var(--space-4) var(--space-5);
+  border-top:1px solid var(--border-subtle);
+  flex-shrink:0;
+}
+
+/* Avatar uploader */
+.avatar-upload{
+  display:flex; flex-direction:column; align-items:center; gap:var(--space-3);
+  margin-bottom:var(--space-5);
+}
+.avatar-upload__preview{ position:relative; width:96px;height:96px; }
+.avatar-upload__edit{
+  position:absolute; bottom:-2px; right:-2px;
+  width:30px;height:30px; border-radius:50%;
+  background:var(--signal-gradient); color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  border:3px solid var(--bg-elevated);
+}
+.avatar-upload__edit svg{ width:13px;height:13px; }
+
+/* Dropdown menu */
+.dropdown{
+  position:absolute; z-index:200;
+  min-width:200px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-lg);
+  padding:6px;
+  animation:dropdownIn var(--dur-fast) var(--ease-spring);
+}
+.dropdown__item{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px; border-radius:var(--radius-sm);
+  font-size:13.5px; width:100%; text-align:left; color:var(--text-primary);
+}
+.dropdown__item:hover{ background:var(--bg-surface-alt); }
+.dropdown__item svg{ width:16px;height:16px; color:var(--text-secondary); }
+.dropdown__item--danger{ color:var(--accent-coral); }
+.dropdown__item--danger svg{ color:var(--accent-coral); }
+.dropdown__divider{ height:1px; background:var(--border-subtle); margin:6px 4px; }
+
+/* Bottom sheet (mobile) */
+.sheet-overlay{
+  position:fixed; inset:0; z-index:400; background:var(--overlay);
+  display:flex; align-items:flex-end; justify-content:center;
+  animation:fadeIn var(--dur-base) var(--ease-out);
+}
+.sheet{
+  width:100%; max-width:520px; max-height:82vh;
+  background:var(--bg-elevated);
+  border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  padding:var(--space-3) var(--space-5) var(--space-6);
+  animation:sheetUp var(--dur-slow) var(--ease-out);
+  overflow-y:auto;
+}
+.sheet__handle{ width:40px; height:4px; border-radius:2px; background:var(--border-strong); margin:0 auto var(--space-4); }
+
+/* Emoji / reaction picker */
+.reaction-picker{
+  display:flex; gap:4px;
+  background:var(--bg-elevated); border:1px solid var(--border-subtle);
+  border-radius:var(--radius-round); padding:6px 8px; box-shadow:var(--shadow-lg);
+  position:absolute; z-index:250;
+  animation:dropdownIn var(--dur-fast) var(--ease-spring);
+}
+.reaction-picker button{ font-size:19px; padding:4px; border-radius:50%; transition:transform var(--dur-fast) var(--ease-spring); }
+.reaction-picker button:hover{ transform:scale(1.25); background:var(--bg-surface-alt); }
+
+/* Member row (group management) */
+.member-row{ display:flex; align-items:center; gap:12px; padding:9px 4px; }
+.member-row__info{ flex:1; min-width:0; }
+.member-row__name{ font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:6px; }
+.member-row__role{ font-size:11.5px; color:var(--text-tertiary); }
+
+/* Invite link box */
+.invite-box{
+  display:flex; align-items:center; gap:10px;
+  background:var(--input-bg); border-radius:var(--radius-md);
+  padding:10px 12px;
+}
+.invite-box code{ flex:1; font-family:var(--font-mono); font-size:12.5px; color:var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* Context menu backdrop for closing on click-away */
+.click-catcher{ position:fixed; inset:0; z-index:190; }

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<!--
+  Viewport is locked to disable pinch/double-tap zoom on supported mobile
+  browsers while keeping the layout fully responsive (see zoom-lock.js for
+  the JS-side guards this pairs with).
+-->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#F2F4FA" />
+<meta name="description" content="HUB Chat — a premium real-time messaging experience." />
+<title>HUB CHAT</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/auth.css">
+<link rel="stylesheet" href="css/stories.css">
+<link rel="stylesheet" href="css/calls.css">
+<link rel="stylesheet" href="css/modals.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<section id="authScreen" class="auth-screen">
+  <div class="auth-screen__orb auth-screen__orb--1"></div>
+  <div class="auth-screen__orb auth-screen__orb--2"></div>
+
+  <div class="auth-card">
+    <div class="auth-card__mark"><i data-lucide="waves"></i></div>
+    <h1>HUB CHAT</h1>
+    <p class="auth-card__subtitle">Real-time conversations, reimagined.</p>
+
+    <div id="authActions">
+      <button class="btn btn--google btn--block" id="googleSignInBtn">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.5 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.2C29.3 35.4 26.8 36 24 36c-5.3 0-9.7-3.1-11.3-7.6l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1 3-3 5.5-5.7 7.1l6.3 5.2C39.9 37.4 44 31.5 44 24c0-1.4-.1-2.7-.4-3.5z"/></svg>
+        Continue with Google
+      </button>
+    </div>
+    <div class="auth-loading" id="authLoading">
+      <div class="spinner"></div>
+      <p style="font-size:13px;color:var(--text-secondary)">Signing you in…</p>
+    </div>
+
+    <div class="auth-card__terms">
+      By continuing you agree to HUB Chat's <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.
+      <br><span id="backendModeNote" style="opacity:.7"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MAIN APP ===================== -->
+<div id="app" class="hidden">
+  <div class="app-shell" id="appShell" data-mobile-view="list">
+
+    <!-- ---------- Nav Rail ---------- -->
+    <nav class="nav-rail">
+      <div class="nav-rail__logo"><i data-lucide="waves"></i></div>
+      <div class="nav-rail__items">
+        <button class="rail-btn is-active" data-nav="chats" aria-label="Chats" title="Chats">
+          <i data-lucide="message-circle"></i>
+          <span class="rail-btn__badge hidden" id="chatsBadge"></span>
+        </button>
+        <button class="rail-btn" data-nav="stories" aria-label="Stories" title="Stories">
+          <i data-lucide="circle-play"></i>
+        </button>
+        <button class="rail-btn" data-nav="calls" aria-label="Calls" title="Calls">
+          <i data-lucide="phone"></i>
+        </button>
+        <button class="rail-btn" data-nav="notifications" aria-label="Notifications" title="Notifications">
+          <i data-lucide="bell"></i>
+          <span class="rail-btn__badge hidden" id="notifBadge"></span>
+        </button>
+      </div>
+      <div class="nav-rail__spacer"></div>
+      <button class="rail-btn" id="themeToggleBtn" data-theme-toggle aria-label="Toggle theme" title="Toggle dark / light mode">
+        <i data-lucide="moon-star"></i>
+      </button>
+      <div class="nav-rail__avatar" id="myAvatarBtn" title="Your profile">
+        <img id="myAvatarImg" src="" alt="You">
+      </div>
+    </nav>
+
+    <!-- ---------- Sidebar ---------- -->
+    <aside class="sidebar" id="sidebarChats">
+      <header class="sidebar__header">
+        <h1 class="sidebar__title">Chats</h1>
+        <div style="display:flex;gap:6px;">
+          <button class="icon-btn" id="newChatBtn" title="New chat"><i data-lucide="square-pen"></i></button>
+          <button class="icon-btn" id="sidebarMenuBtn" title="More"><i data-lucide="more-horizontal"></i></button>
+        </div>
+      </header>
+
+      <div class="stories-bar" id="storiesBar"><!-- injected by stories module --></div>
+
+      <div class="sidebar__search">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="text" id="chatSearchInput" placeholder="Search messages or people">
+        </div>
+      </div>
+
+      <div class="sidebar__tabs">
+        <div class="pill-tabs" id="chatTabs">
+          <button class="pill-tab is-active" data-tab="all">All</button>
+          <button class="pill-tab" data-tab="groups">Groups</button>
+          <button class="pill-tab" data-tab="pinned">Pinned</button>
+          <button class="pill-tab" data-tab="archived">Archived</button>
+        </div>
+      </div>
+
+      <div class="sidebar__list" id="chatList"><!-- injected --></div>
+    </aside>
+
+    <!-- ---------- Stories screen (mobile-alternate sidebar content) ---------- -->
+    <aside class="sidebar hidden" id="sidebarStories">
+      <header class="sidebar__header">
+        <h1 class="sidebar__title">Stories</h1>
+        <button class="icon-btn" id="closeStoriesPanelBtn" title="Back to chats"><i data-lucide="x"></i></button>
+      </header>
+      <div class="sidebar__list" id="storiesFullList"></div>
+    </aside>
+
+    <!-- ---------- Calls screen (list of recent calls, UI only) ---------- -->
+    <aside class="sidebar hidden" id="sidebarCalls">
+      <header class="sidebar__header">
+        <h1 class="sidebar__title">Calls</h1>
+        <button class="icon-btn" id="closeCallsPanelBtn" title="Back to chats"><i data-lucide="x"></i></button>
+      </header>
+      <div class="sidebar__list" id="callsList"></div>
+    </aside>
+
+    <!-- ---------- Notifications screen ---------- -->
+    <aside class="sidebar hidden" id="sidebarNotifications">
+      <header class="sidebar__header">
+        <h1 class="sidebar__title">Notifications</h1>
+        <button class="icon-btn" id="closeNotificationsPanelBtn" title="Back to chats"><i data-lucide="x"></i></button>
+      </header>
+      <div class="sidebar__list" id="notificationsList"></div>
+    </aside>
+
+    <!-- ---------- Main Chat Panel ---------- -->
+    <main class="main-panel" id="mainPanel">
+      <div class="main-panel__empty" id="emptyState">
+        <div class="empty-mark"><i data-lucide="message-square-text"></i></div>
+        <h3>Select a conversation</h3>
+        <p>Choose a chat from the left, or start a new one to begin messaging.</p>
+        <button class="btn btn--primary" id="emptyNewChatBtn"><i data-lucide="plus"></i> New chat</button>
+      </div>
+
+      <div class="hidden" id="chatView" style="display:flex;flex-direction:column;height:100%;min-height:0;">
+        <header class="topbar">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="icon-btn" id="backToListBtn" style="display:none;"><i data-lucide="arrow-left"></i></button>
+            <div class="topbar__peer" id="topbarPeer">
+              <div class="avatar avatar--md" id="topbarAvatar"></div>
+              <div class="topbar__peer-info">
+                <div class="topbar__peer-name" id="topbarName">—</div>
+                <div class="topbar__peer-status" id="topbarStatus">—</div>
+              </div>
+            </div>
+          </div>
+          <div class="topbar__actions">
+            <button class="icon-btn" id="voiceCallBtn" title="Voice call"><i data-lucide="phone"></i></button>
+            <button class="icon-btn" id="videoCallBtn" title="Video call"><i data-lucide="video"></i></button>
+            <button class="icon-btn" id="searchInChatBtn" title="Search in chat"><i data-lucide="search"></i></button>
+            <button class="icon-btn" id="chatInfoBtn" title="Chat info"><i data-lucide="info"></i></button>
+            <button class="icon-btn" id="chatMenuBtn" title="More"><i data-lucide="more-vertical"></i></button>
+          </div>
+        </header>
+
+        <div class="composer__reply-preview" id="searchInChatBar" style="margin:10px 20px 0;">
+          <div class="search-box" style="flex:1;">
+            <i data-lucide="search"></i>
+            <input type="text" id="inChatSearchInput" placeholder="Search in this conversation">
+          </div>
+          <button class="icon-btn" id="closeInChatSearchBtn"><i data-lucide="x"></i></button>
+        </div>
+
+        <div class="message-list scroll-smooth" id="messageList"></div>
+
+        <div id="typingIndicatorRow" style="padding:0 28px 4px;display:none;">
+          <div class="typing-bubble"><span></span><span></span><span></span></div>
+        </div>
+
+        <footer class="composer">
+          <div class="composer__reply-preview" id="replyPreview">
+            <div style="min-width:0;">
+              <div style="font-size:12px;font-weight:700;color:var(--signal-start);">Replying to <span id="replyPreviewName"></span></div>
+              <div style="font-size:12.5px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="replyPreviewText"></div>
+            </div>
+            <button class="icon-btn" id="cancelReplyBtn"><i data-lucide="x"></i></button>
+          </div>
+
+          <div class="composer__bar">
+            <button class="icon-btn" id="attachBtn" title="Attach"><i data-lucide="paperclip"></i></button>
+            <input type="file" id="fileInput" class="hidden" multiple>
+            <textarea class="composer__textarea" id="messageInput" placeholder="Type a message" rows="1"></textarea>
+            <button class="icon-btn" id="voiceNoteBtn" title="Record voice note"><i data-lucide="mic"></i></button>
+            <button class="icon-btn icon-btn--filled" id="sendBtn" title="Send"><i data-lucide="send"></i></button>
+          </div>
+        </footer>
+      </div>
+
+      <!-- ---------- Context Panel (chat / group info) ---------- -->
+      <aside class="context-panel" id="contextPanel">
+        <header class="modal__header">
+          <h2 id="contextPanelTitle">Chat info</h2>
+          <button class="icon-btn" id="closeContextPanelBtn"><i data-lucide="x"></i></button>
+        </header>
+        <div class="modal__body" id="contextPanelBody"></div>
+      </aside>
+    </main>
+  </div>
+</div>
+
+<!-- ===================== TEMPLATES (cloned by JS) ===================== -->
+<template id="tpl-modal-shell">
+  <div class="modal-overlay">
+    <div class="modal">
+      <div class="modal__header"><h2></h2><button class="icon-btn modal-close"><i data-lucide="x"></i></button></div>
+      <div class="modal__body"></div>
+      <div class="modal__footer"></div>
+    </div>
+  </div>
+</template>
+
+<!-- App scripts (ES modules) -->
+<script type="module" src="js/app.js"></script>
+
+<!-- Lucide icon library (professional icon set, no emoji) -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</body>
+</html>
