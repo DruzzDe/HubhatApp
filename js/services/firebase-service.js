@@ -14,8 +14,8 @@ import { firebaseConfig, fcmVapidKey } from '../config/firebase-config.js';
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
-  updateProfile, deleteUser,
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult,
+  signOut, onAuthStateChanged, updateProfile, deleteUser,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   getFirestore, collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc,
@@ -40,11 +40,14 @@ export function watchAuthState(callback){
   return onAuthStateChanged(auth, callback);
 }
 
-export async function signInWithGoogle(){
-  const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
-  const { uid, displayName, email, photoURL } = result.user;
-  // Ensure a user profile document exists in Firestore.
+// Mobile browsers frequently block or mishandle signInWithPopup (it can silently
+// open as a background tab and never resolve). Redirect is the flow Firebase
+// itself recommends for mobile web, so we use it there and keep the nicer
+// same-tab popup experience on desktop.
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+async function ensureUserProfile(user){
+  const { uid, displayName, email, photoURL } = user;
   const userRef = doc(db, 'users', uid);
   const snap = await getDoc(userRef);
   if (!snap.exists()) {
@@ -58,6 +61,26 @@ export async function signInWithGoogle(){
   } else {
     await updateDoc(userRef, { online: true, lastSeen: serverTimestamp() });
   }
+}
+
+export async function signInWithGoogle(){
+  const provider = new GoogleAuthProvider();
+  if (isMobile) {
+    // Navigates away to Google and back to this same tab — no popup involved.
+    await signInWithRedirect(auth, provider);
+    return null; // the actual result arrives later via getGoogleRedirectResult()
+  }
+  const result = await signInWithPopup(auth, provider);
+  await ensureUserProfile(result.user);
+  return result.user;
+}
+
+// Call once on page load to pick up the user coming back from a redirect
+// sign-in (mobile flow). Resolves to null if there was no pending redirect.
+export async function getGoogleRedirectResult(){
+  const result = await getRedirectResult(auth);
+  if (!result) return null;
+  await ensureUserProfile(result.user);
   return result.user;
 }
 

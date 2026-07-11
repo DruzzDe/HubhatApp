@@ -22,13 +22,49 @@ async function loadFirebase(){
   return firebaseSvc;
 }
 
+// Holds the mapped current user when running against real Firebase Auth.
+// (Kept separate from demo state so the two backends never mix.)
+let liveUser = null;
+function mapUser(u){
+  if (!u) return null;
+  return {
+    id: u.uid, displayName: u.displayName || 'You', photoURL: u.photoURL || '',
+    email: u.email, status: 'Hey there! I am using HUB Chat.', online: true,
+  };
+}
+
 /* ------------------------------- Auth -------------------------------- */
+
+// Must be awaited once at boot, before the first currentUser() check, so
+// an existing session (or a mobile sign-in returning via redirect) is
+// picked up. Resolves to the current user (or null) either way.
+export async function initAuth(){
+  if (!isFirebaseConfigured) return demo.demoCurrentUser();
+  const fb = await loadFirebase();
+  const redirectUser = await fb.getGoogleRedirectResult();
+  if (redirectUser) {
+    liveUser = mapUser(redirectUser);
+    return liveUser;
+  }
+  // No pending redirect — check whether Firebase already has a persisted session.
+  return new Promise((resolve) => {
+    const unsub = fb.watchAuthState((u) => {
+      unsub();
+      liveUser = mapUser(u);
+      resolve(liveUser);
+    });
+  });
+}
 
 export async function signIn(){
   if (isFirebaseConfigured) {
     const fb = await loadFirebase();
     const user = await fb.signInWithGoogle();
-    return { id: user.uid, displayName: user.displayName, photoURL: user.photoURL, email: user.email };
+    // On mobile this returns null immediately (redirect navigates away);
+    // liveUser gets populated by initAuth()'s getGoogleRedirectResult()
+    // call after the page reloads back from Google.
+    if (user) liveUser = mapUser(user);
+    return liveUser;
   }
   return demo.demoSignIn();
 }
@@ -36,12 +72,14 @@ export async function signIn(){
 export async function signOutUser(){
   if (isFirebaseConfigured) {
     const fb = await loadFirebase();
-    return fb.signOutUser(demo.demoCurrentUser()?.id);
+    const uidVal = liveUser?.id;
+    liveUser = null;
+    return fb.signOutUser(uidVal);
   }
   return demo.demoSignOut();
 }
 
-export function currentUser(){ return demo.demoCurrentUser(); }
+export function currentUser(){ return isFirebaseConfigured ? liveUser : demo.demoCurrentUser(); }
 export function updateProfile(patch){ return demo.demoUpdateProfile(patch); }
 export function deleteAccount(){ return demo.demoDeleteAccount(); }
 export function getUser(id){ return demo.demoGetUser(id); }

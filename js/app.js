@@ -34,23 +34,39 @@ const state = {
 
 document.addEventListener('DOMContentLoaded', boot);
 
-function boot(){
+async function boot(){
   refreshIcons();
   $('#googleSignInBtn').addEventListener('click', handleSignIn);
   $('#backendModeNote').textContent = data.backendMode === 'demo'
     ? 'Running in demo mode — connect Firebase in js/config/firebase-config.js to go live.'
     : 'Connected to Firebase.';
 
-  const existing = data.currentUser();
-  if (existing) enterApp();
+  // On mobile, sign-in navigates away to Google and back to this page, so on
+  // that return trip we land back in boot() and need to resolve the pending
+  // redirect result before we know whether someone's signed in. Show the
+  // spinner while that (brief) check happens instead of flashing the button.
+  $('#authActions').classList.add('hidden');
+  $('#authLoading').classList.add('is-visible');
+  try {
+    const existing = await data.initAuth();
+    if (existing) { enterApp(); return; }
+  } catch (err) {
+    showToast(`Sign-in failed: ${err.message}`, 'error');
+  }
+  $('#authActions').classList.remove('hidden');
+  $('#authLoading').classList.remove('is-visible');
 }
 
 async function handleSignIn(){
   $('#authActions').classList.add('hidden');
   $('#authLoading').classList.add('is-visible');
   try {
-    await data.signIn();
-    setTimeout(enterApp, 600); // brief, deliberate pause so the spinner reads as real auth
+    const user = await data.signIn();
+    if (user) {
+      setTimeout(enterApp, 600); // brief, deliberate pause so the spinner reads as real auth
+    }
+    // else: mobile redirect flow — the page is about to navigate to Google;
+    // nothing more to do here, the spinner stays up until that happens.
   } catch (err) {
     showToast(`Sign-in failed: ${err.message}`, 'error');
     $('#authActions').classList.remove('hidden');
